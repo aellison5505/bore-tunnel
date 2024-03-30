@@ -47,7 +47,7 @@ pub fn start_service() {
 ///
 /// Panics if .
 pub fn my_service_main(arguments: Vec<OsString>) {
-    let (bore_service, run_handle) = abortable(run_service(arguments));
+    let (bore_service, run_handle) = abortable(run_client_service(arguments));
 
     let event_handler = move |control_event| -> ServiceControlHandlerResult {
         match control_event {
@@ -103,7 +103,7 @@ pub fn my_service_main(arguments: Vec<OsString>) {
         .unwrap();
 }
 
-async fn run_service(_arguments: Vec<OsString>) {
+async fn run_client_service(_arguments: Vec<OsString>) {
     let args: Vec<_> = env::args().collect();
 
     let secret: Option<&str>;
