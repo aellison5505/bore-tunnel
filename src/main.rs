@@ -2,6 +2,7 @@ use anyhow::Result;
 use bore_cli::{client::Client, server::Server};
 use clap::{error::ErrorKind, CommandFactory, Parser, Subcommand};
 
+
 #[derive(Parser, Debug)]
 #[clap(author, version, about)]
 struct Args {
@@ -31,6 +32,10 @@ enum Command {
         /// Optional secret for authentication.
         #[clap(short, long, env = "BORE_SECRET", hide_env_values = true)]
         secret: Option<String>,
+
+        /// Optional value to run windows servce.
+        #[clap(short, long, default_value = "false")]
+        win_service: String,
     },
 
     /// Runs the remote proxy server.
@@ -58,9 +63,18 @@ async fn run(command: Command) -> Result<()> {
             to,
             port,
             secret,
+            win_service
+            
         } => {
-            let client = Client::new(&local_host, local_port, &to, port, secret.as_deref()).await?;
-            client.listen().await?;
+            if win_service == "true" {
+                
+            } else if win_service == "false" {
+                let client = Client::new(&local_host, local_port, &to, port, secret.as_deref()).await?;
+                client.listen().await?;
+            } else {
+                panic!("No service");
+            }
+           
         }
         Command::Server {
             min_port,
