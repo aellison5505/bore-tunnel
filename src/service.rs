@@ -5,10 +5,10 @@ use futures::future::abortable;
 use futures_lite::future::block_on;
 ///'
 ///Install:
-///  New-Service -Name "BoreTunnel" -Description "Creates a bore tunnel." -BinaryPathName "D:\dev\Service_rs\target\release\bore_win_service.exe localhost 3389 tunnel.mobilewebapp.net 11250"
+///   New-Service -Name "BoreTunnel" -Description "Creates a bore tunnel." -BinaryPathName "D:\dev\bore-tunnel\target\debug\bore.exe service localhost 3389 tunnel.mobilewebapp.net 11250"
 ///
 ///
-use windows_service::define_windows_service;
+
 
 use std::env;
 use std::{ffi::OsString, time::Duration, u16};
@@ -105,20 +105,20 @@ pub fn my_service_main(arguments: Vec<OsString>) {
 
 async fn run_client_service(_arguments: Vec<OsString>) {
     let args: Vec<_> = env::args().collect();
-
+    
     let secret: Option<&str>;
 
-    if args.get(5).is_none() {
+    if args.get(6).is_none() {
         secret = None;
     } else {
-        secret = Some(args[5].as_str());
+        secret = Some(args[6].as_str());
     }
 
     let struct_args = Args {
-        host: args[1].as_str(),
-        host_port: args[2].parse::<u16>().unwrap(),
-        to: args[3].as_str(),
-        to_port: args[4].parse::<u16>().unwrap(),
+        host: args[2].as_str(),
+        host_port: args[3].parse::<u16>().unwrap(),
+        to: args[4].as_str(),
+        to_port: args[5].parse::<u16>().unwrap(),
         sec: secret,
     };
 

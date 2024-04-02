@@ -14,7 +14,8 @@
 
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
-
+#[macro_use]
+extern crate windows_service;
 pub mod auth;
 pub mod client;
 pub mod server;

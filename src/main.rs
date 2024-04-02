@@ -1,8 +1,9 @@
+use std::env;
+
 use anyhow::Result;
 use bore_cli::{client::Client, server::Server};
 use clap::{error::ErrorKind, CommandFactory, Parser, Subcommand};
-
-
+use bore_cli::service::start_service;
 #[derive(Parser, Debug)]
 #[clap(author, version, about)]
 struct Args {
@@ -33,9 +34,6 @@ enum Command {
         #[clap(short, long, env = "BORE_SECRET", hide_env_values = true)]
         secret: Option<String>,
 
-        /// Optional value to run windows servce.
-        #[clap(short, long, default_value = "false")]
-        win_service: String,
     },
 
     /// Runs the remote proxy server.
@@ -62,18 +60,13 @@ async fn run(command: Command) -> Result<()> {
             local_port,
             to,
             port,
-            secret,
-            win_service
+            secret
             
         } => {
-            if win_service == "true" {
-                
-            } else if win_service == "false" {
+           
                 let client = Client::new(&local_host, local_port, &to, port, secret.as_deref()).await?;
                 client.listen().await?;
-            } else {
-                panic!("No service");
-            }
+          
            
         }
         Command::Server {
@@ -96,5 +89,12 @@ async fn run(command: Command) -> Result<()> {
 
 fn main() -> Result<()> {
     tracing_subscriber::fmt::init();
-    run(Args::parse().command)
+    let args: Vec<_> = env::args().collect();
+    if args.get(1).unwrap() == "service" {
+        start_service();
+    } else {
+        let _ = run(Args::parse().command);
+    }
+    Ok(())
+    
 }
